@@ -1,191 +1,193 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import ButtonDefault from "@/components/Buttons/ButtonDefault";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import apiRequest from "@/services/apiRequest";
-import { Product } from "@/types/product";
-import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
-const productData: Product[] = [
-  {
-    image: "/images/product/product-01.png",
-    name: "Apple Watch Series 7",
-    category: "Electronics",
-    price: 296,
-    sold: 22,
-    profit: 45,
-  },
-  {
-    image: "/images/product/product-02.png",
-    name: "Macbook Pro M1",
-    category: "Electronics",
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: "/images/product/product-03.png",
-    name: "Dell Inspiron 15",
-    category: "Electronics",
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: "/images/product/product-04.png",
-    name: "HP Probook 450",
-    category: "Electronics",
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-  {
-    image: "/images/product/product-02.png",
-    name: "Macbook Pro M1",
-    category: "Electronics",
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: "/images/product/product-03.png",
-    name: "Dell Inspiron 15",
-    category: "Electronics",
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: "/images/product/product-04.png",
-    name: "HP Probook 450",
-    category: "Electronics",
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-  {
-    image: "/images/product/product-02.png",
-    name: "Macbook Pro M1",
-    category: "Electronics",
-    price: 546,
-    sold: 12,
-    profit: 125,
-  },
-  {
-    image: "/images/product/product-03.png",
-    name: "Dell Inspiron 15",
-    category: "Electronics",
-    price: 443,
-    sold: 64,
-    profit: 247,
-  },
-  {
-    image: "/images/product/product-04.png",
-    name: "HP Probook 450",
-    category: "Electronics",
-    price: 499,
-    sold: 72,
-    profit: 103,
-  },
-];
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { convertToCambodiaTime } from "@/utils/help";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEye,
+  faToggleOff,
+  faToggleOn,
+  faTrash,
+  faUserPen,
+} from "@fortawesome/free-solid-svg-icons";
 
 const QuizPage = () => {
-  // const getData = async () => {
-  //   try {
-  //     const response = await apiRequest("GET", "/quiz");
-  //     console.log(response);
-  //   } catch (error) {}
-  // };
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedPage = Number(searchParams.get("page")) || 1;
+  const selectedSearch = searchParams.get("key") || "";
+  const selectedPageSize = Number(searchParams.get("pageSize")) || 10;
+  const [page, setPage] = useState(selectedPage);
+  const [search, setSearch] = useState(selectedSearch);
+  const [pageSize, setPageSize] = useState(selectedPageSize);
+  const [data, setData] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      const pageQuery = Number(searchParams.get("page")) || 1;
+      const searchQuery = searchParams.get("key") || "";
+      const pageSizeQuery = Number(searchParams.get("pageSize")) || 10;
+      setPage(pageQuery);
+      setSearch(searchQuery);
+      setPageSize(pageSizeQuery);
+      const response = await apiRequest(
+        "GET",
+        `/quiz?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
+      );
+      setTotalPages(response.totalPages);
+      setData(response.data);
+    };
+
+    fetchInitialData();
+  }, [selectedPage, selectedSearch, selectedPageSize]);
+
+  const handleSearch = (value: any) => {
+    setSearch(value);
+    router.push(`?page=1&key=${value}&pageSize=${pageSize}`);
+  };
+
+  const handlePageSizeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newSize = Number(event.target.value);
+    setPageSize(newSize);
+    router.push(`?page=1&key=${search}&pageSize=${newSize}`);
+  };
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl">
         <Breadcrumb pageName="Quiz" />
         <div className="overflow-x-auto">
           <div className="min-w-fit rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
-            <div className="flex justify-between px-4 py-3 md:px-6 xl:px-9">
+            <div className="flex items-center justify-between px-4 py-3 md:px-6 xl:px-9">
               <div className="max-w-[30%] max-[800px]:max-w-[50%]">
                 <input
+                  onChange={(e) => handleSearch(e.target.value)}
+                  value={search}
                   type="text"
-                  placeholder="Search users"
+                  placeholder="Search Quiz"
                   className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                 />
               </div>
               <div className="max-w-[30%]">
-                {/* <ButtonDefault
-                  label="Create"
-                  link="/"
-                  customClasses="bg-primary rounded-[5px] text-white h-full px-4"
+                <Link
+                  href="/quiz/create"
+                  className=" rounded-md bg-primary px-4 py-2 text-white"
                 >
-                  <svg
-                    className="fill-current"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
-
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        d="M12.75 9C12.75 8.58579 12.4142 8.25 12 8.25C11.5858 8.25 11.25 8.58579 11.25 9L11.25 11.25H9C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75H11.25V15C11.25 15.4142 11.5858 15.75 12 15.75C12.4142 15.75 12.75 15.4142 12.75 15L12.75 12.75H15C15.4142 12.75 15.75 12.4142 15.75 12C15.75 11.5858 15.4142 11.25 15 11.25H12.75V9Z"
-                        fill="#fff"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.0574 1.25H11.9426C9.63424 1.24999 7.82519 1.24998 6.41371 1.43975C4.96897 1.63399 3.82895 2.03933 2.93414 2.93414C2.03933 3.82895 1.63399 4.96897 1.43975 6.41371C1.24998 7.82519 1.24999 9.63422 1.25 11.9426V12.0574C1.24999 14.3658 1.24998 16.1748 1.43975 17.5863C1.63399 19.031 2.03933 20.1711 2.93414 21.0659C3.82895 21.9607 4.96897 22.366 6.41371 22.5603C7.82519 22.75 9.63423 22.75 11.9426 22.75H12.0574C14.3658 22.75 16.1748 22.75 17.5863 22.5603C19.031 22.366 20.1711 21.9607 21.0659 21.0659C21.9607 20.1711 22.366 19.031 22.5603 17.5863C22.75 16.1748 22.75 14.3658 22.75 12.0574V11.9426C22.75 9.63423 22.75 7.82519 22.5603 6.41371C22.366 4.96897 21.9607 3.82895 21.0659 2.93414C20.1711 2.03933 19.031 1.63399 17.5863 1.43975C16.1748 1.24998 14.3658 1.24999 12.0574 1.25ZM3.9948 3.9948C4.56445 3.42514 5.33517 3.09825 6.61358 2.92637C7.91356 2.75159 9.62177 2.75 12 2.75C14.3782 2.75 16.0864 2.75159 17.3864 2.92637C18.6648 3.09825 19.4355 3.42514 20.0052 3.9948C20.5749 4.56445 20.9018 5.33517 21.0736 6.61358C21.2484 7.91356 21.25 9.62177 21.25 12C21.25 14.3782 21.2484 16.0864 21.0736 17.3864C20.9018 18.6648 20.5749 19.4355 20.0052 20.0052C19.4355 20.5749 18.6648 20.9018 17.3864 21.0736C16.0864 21.2484 14.3782 21.25 12 21.25C9.62177 21.25 7.91356 21.2484 6.61358 21.0736C5.33517 20.9018 4.56445 20.5749 3.9948 20.0052C3.42514 19.4355 3.09825 18.6648 2.92637 17.3864C2.75159 16.0864 2.75 14.3782 2.75 12C2.75 9.62177 2.75159 7.91356 2.92637 6.61358C3.09825 5.33517 3.42514 4.56445 3.9948 3.9948Z"
-                        fill="#fff"
-                      />
-                    </g>
-                  </svg>
-                </ButtonDefault> */}
+                  Create
+                </Link>
               </div>
             </div>
 
-            {/* <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 sm:grid-cols-8 md:px-6 2xl:px-7.5">
-              <div className="flex min-w-[220px] items-center">
+            <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 ">
+              <div className="flex w-[15%] min-w-[100px] items-center">
                 <p className="font-medium">Quiz Name</p>
               </div>
-              <div className="hidden min-w-[220px] items-center sm:flex">
+              <div className=" w-[30%] min-w-[200px] items-center">
                 <p className="font-medium">Description</p>
               </div>
-              <div className="flex min-w-[120px] items-center">
+              <div className="flex w-[15%] min-w-[100px] items-center">
                 <p className="font-medium">Status</p>
               </div>
-              <div className="flex min-w-[120px] items-center">
+              <div className="flex w-[25%] min-w-[100px] items-center">
                 <p className="font-medium">Create Date</p>
               </div>
-            </div> */}
+              <div className="flex w-[15%] min-w-[200px] items-center">
+                <p className="font-medium">Action</p>
+              </div>
+            </div>
 
-            {/* {productData.map((product, key) => (
+            {data?.map((product: any, key: any) => (
               <div
-                className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 sm:grid-cols-8 md:px-6 2xl:px-7.5"
+                className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 "
                 key={key}
               >
-                <div className="flex min-w-[220px] items-center">
-                  <p className="font-medium">{product.name}</p>
+                <div className="flex w-[15%] min-w-[100px] items-center">
+                  <p className="max-lines-1 font-medium">{product.name}</p>
                 </div>
-                <div className="hidden min-w-[220px] items-center sm:flex">
-                  <p className="font-medium">Category</p>
+                <div className=" w-[30%] min-w-[200px] items-center ">
+                  <p className="max-lines-1 font-medium ">
+                    {product.description}
+                  </p>
                 </div>
-                <div className="flex min-w-[120px] items-center">
-                  <p className="font-medium">Price</p>
+                <div className="flex w-[15%] min-w-[100px] items-center">
+                  <p className="max-lines-1 font-medium">
+                    {product.status ? (
+                      <button>
+                        <FontAwesomeIcon
+                          icon={faToggleOn}
+                          className="h-[25px]"
+                        />
+                      </button>
+                    ) : (
+                      <button>
+                        <FontAwesomeIcon
+                          icon={faToggleOff}
+                          className="h-[25px]"
+                        />
+                      </button>
+                    )}
+                  </p>
                 </div>
-                <div className="flex min-w-[120px] items-center">
-                  <p className="font-medium">Sold</p>
+                <div className="flex w-[25%] min-w-[200px] items-center">
+                  <p className="max-lines-1 font-medium">
+                    {convertToCambodiaTime(product.createdAt)}
+                  </p>
+                </div>
+                <div className="flex w-[15%] min-w-[200px] items-center">
+                  <p className="max-lines-1 font-medium">
+                    <button className="me-1 rounded-md bg-blue-400 px-2 py-1 text-sm text-white">
+                      <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    <button className="me-1 rounded-md bg-primary px-2 py-1 text-sm text-white">
+                      <FontAwesomeIcon icon={faUserPen} />
+                    </button>
+                    <button className="me-1 rounded-md bg-red px-2 py-1 text-sm text-white">
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </p>
                 </div>
               </div>
-            ))} */}
+            ))}
+          </div>
+        </div>
+        <div className="mb-9 mt-4 flex items-center justify-end">
+          <Link
+            href={`?page=${selectedPage > 1 ? selectedPage - 1 : 1}&key=${search}&pageSize=${pageSize}`}
+            className={`rounded-sm bg-primary p-2 text-white ${selectedPage <= 1 ? "cursor-not-allowed opacity-50" : ""}`}
+            aria-disabled={selectedPage <= 1}
+          >
+            Previous
+          </Link>
+          <div className="mx-4 text-xl">
+            {selectedPage}/{totalPages}
+          </div>
+          <Link
+            href={`?page=${selectedPage < totalPages ? selectedPage + 1 : totalPages}&key=${search}&pageSize=${pageSize}`}
+            className={`rounded-sm bg-primary p-2 text-white ${selectedPage >= totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+            aria-disabled={selectedPage >= totalPages}
+          >
+            Next
+          </Link>
+
+          <div className="ms-3">
+            <select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              className="rounded-md border border-stroke bg-white px-4 py-2"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
           </div>
         </div>
       </div>

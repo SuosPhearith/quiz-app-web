@@ -1,9 +1,13 @@
-export const saveTokenLogin = (accessToken, refreshToken, role) => {
+export const saveTokenLogin = (
+  accessToken: string,
+  refreshToken: string,
+  role: string,
+) => {
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("refreshToken", refreshToken);
   localStorage.setItem("role", role);
 };
-export const saveToken = (accessToken, refreshToken) => {
+export const saveToken = (accessToken: string, refreshToken: string) => {
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("refreshToken", refreshToken);
 };
@@ -13,7 +17,7 @@ export const logout = () => {
   window.location.href = "/";
 };
 
-export const convertToCambodiaTime = (utcTimestamp) => {
+export const convertToCambodiaTime = (utcTimestamp: any) => {
   // Create a Date object from the UTC timestamp
   const utcDate = new Date(utcTimestamp);
 

@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Loader from "../common/Loader";
 import Spinner from "../Spinner";
+import { saveTokenLogin } from "@/utils/help";
 
 type Inputs = {
   email: string;
@@ -34,7 +35,14 @@ export default function SigninWithPassword() {
         password: data.password,
         userAgent,
       });
-      return response.data;
+      //::==>> save data to localstorage
+      saveTokenLogin(
+        response.accessToken,
+        response.refreshToken,
+        response.user.roleId,
+      );
+      //::==>> redirect back
+      window.location.href = "/";
     },
     onSuccess: (data) => {
       window.location.href = "/";

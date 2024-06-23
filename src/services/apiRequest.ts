@@ -50,8 +50,7 @@ async function apiRequest(method: string, url: string, data = {}) {
         logout();
       }
     } else {
-      console.error("API request error:", error);
-      //   message.error(error.response.data.message);
+      throw new Error(error.response.data.message);
     }
   }
 }
@@ -59,7 +58,7 @@ async function apiRequest(method: string, url: string, data = {}) {
 async function refreshToken() {
   try {
     //::==>> make request to get new accessToken by using refreshToken
-    const newToken = await axios.post(`${baseUrl}auth/refreshToken`, {
+    const newToken = await axios.post(`${baseUrl}/auth/refreshToken`, {
       //::==>> get refreshToken from localstorage
       refreshToken: localStorage.getItem("refreshToken"),
     });
