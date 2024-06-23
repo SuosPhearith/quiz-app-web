@@ -4,6 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
+.max-lines-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; /* For future browser support */
+  }
+  
+  .max-lines-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2; /* For future browser support */
+  }
+  
+  .max-lines-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3; /* For future browser support */
+  }
+  
+  /* Add more if needed */
+
 @layer base {
     body {
         @apply relative z-1 bg-gray-2 font-satoshi text-base font-normal text-dark-5 dark:bg-[#020D1A] dark:text-dark-6;
