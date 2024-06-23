@@ -1,10 +1,11 @@
+"use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import ButtonDefault from "@/components/Buttons/ButtonDefault";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-import { BRAND } from "@/types/brand";
+import apiRequest from "@/services/apiRequest";
 import { Product } from "@/types/product";
-import Image from "next/image";
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect } from "react";
 const productData: Product[] = [
   {
     image: "/images/product/product-01.png",
@@ -89,6 +90,15 @@ const productData: Product[] = [
 ];
 
 const QuizPage = () => {
+  // const getData = async () => {
+  //   try {
+  //     const response = await apiRequest("GET", "/quiz");
+  //     console.log(response);
+  //   } catch (error) {}
+  // };
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl">
@@ -104,7 +114,7 @@ const QuizPage = () => {
                 />
               </div>
               <div className="max-w-[30%]">
-                <ButtonDefault
+                {/* <ButtonDefault
                   label="Create"
                   link="/"
                   customClasses="bg-primary rounded-[5px] text-white h-full px-4"
@@ -138,29 +148,26 @@ const QuizPage = () => {
                       />
                     </g>
                   </svg>
-                </ButtonDefault>
+                </ButtonDefault> */}
               </div>
             </div>
 
-            <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 sm:grid-cols-8 md:px-6 2xl:px-7.5">
+            {/* <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 sm:grid-cols-8 md:px-6 2xl:px-7.5">
               <div className="flex min-w-[220px] items-center">
-                <p className="font-medium">Product Name</p>
+                <p className="font-medium">Quiz Name</p>
               </div>
               <div className="hidden min-w-[220px] items-center sm:flex">
-                <p className="font-medium">Category</p>
+                <p className="font-medium">Description</p>
               </div>
               <div className="flex min-w-[120px] items-center">
-                <p className="font-medium">Price</p>
+                <p className="font-medium">Status</p>
               </div>
               <div className="flex min-w-[120px] items-center">
-                <p className="font-medium">Sold</p>
+                <p className="font-medium">Create Date</p>
               </div>
-              <div className="flex min-w-[120px] items-center">
-                <p className="font-medium">Profit</p>
-              </div>
-            </div>
+            </div> */}
 
-            {productData.map((product, key) => (
+            {/* {productData.map((product, key) => (
               <div
                 className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 sm:grid-cols-8 md:px-6 2xl:px-7.5"
                 key={key}
@@ -177,11 +184,8 @@ const QuizPage = () => {
                 <div className="flex min-w-[120px] items-center">
                   <p className="font-medium">Sold</p>
                 </div>
-                <div className="flex min-w-[120px] items-center">
-                  <p className="font-medium">Profit</p>
-                </div>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>

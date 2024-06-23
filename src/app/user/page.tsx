@@ -104,7 +104,7 @@ const UserPage = () => {
                 />
               </div>
               <div className="max-w-[30%]">
-                <ButtonDefault
+                {/* <ButtonDefault
                   label="Create"
                   link="/"
                   customClasses="bg-primary rounded-[5px] text-white h-full px-4"
@@ -138,7 +138,7 @@ const UserPage = () => {
                       />
                     </g>
                   </svg>
-                </ButtonDefault>
+                </ButtonDefault> */}
               </div>
             </div>
 
