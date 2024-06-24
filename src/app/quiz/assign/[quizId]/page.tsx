@@ -7,20 +7,21 @@ import apiRequest from "@/services/apiRequest";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { convertToCambodiaTime } from "@/utils/help";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEye,
-  faFileLines,
-  faToggleOff,
-  faToggleOn,
-  faTrash,
-  faUserPen,
-} from "@fortawesome/free-solid-svg-icons";
-import { Popconfirm, PopconfirmProps, message } from "antd";
+import { faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import { message } from "antd";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Spinner from "@/components/Spinner";
 
-const QuizPage = () => {
+interface AssignPageProps {
+  params: {
+    quizId: number;
+  };
+}
+
+const AssignPage: React.FC<AssignPageProps> = ({ params }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const selectedPage = Number(searchParams.get("page")) || 1;
   const selectedSearch = searchParams.get("key") || "";
@@ -30,6 +31,7 @@ const QuizPage = () => {
   const [pageSize, setPageSize] = useState(selectedPageSize);
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedUsers, setSelectedUsers] = useState<{ id: number }[]>([]);
 
   const fetchInitialData = async () => {
     const pageQuery = Number(searchParams.get("page")) || 1;
@@ -38,14 +40,30 @@ const QuizPage = () => {
     setPage(pageQuery);
     setSearch(searchQuery);
     setPageSize(pageSizeQuery);
+    setLoading(true);
     const response = await apiRequest(
       "GET",
-      `/quiz?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
+      `/account?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
     );
     setTotalPages(response.totalPages);
     setData(response.data);
+    setLoading(false);
   };
+
+  const fetchSelectedUser = async () => {
+    try {
+      const selectedUsers = await apiRequest(
+        "GET",
+        `/account/get/selected/users/${params.quizId}`,
+      );
+      setSelectedUsers(selectedUsers); // Set selected users
+    } catch (error) {
+      message.error("Something went wrong");
+    }
+  };
+
   useEffect(() => {
+    fetchSelectedUser();
     fetchInitialData();
   }, [selectedPage, selectedSearch, selectedPageSize]);
 
@@ -61,80 +79,134 @@ const QuizPage = () => {
     setPageSize(newSize);
     router.push(`?page=1&key=${search}&pageSize=${newSize}`);
   };
-  //::==================================================================
-  const confirm = async (id: number) => {
+
+  const handleSelectUser = (userId: number) => {
+    setSelectedUsers((prevSelectedUsers) => {
+      if (prevSelectedUsers.some((user) => user.id === userId)) {
+        return prevSelectedUsers.filter((user) => user.id !== userId);
+      } else {
+        return [...prevSelectedUsers, { id: userId }];
+      }
+    });
+  };
+
+  const handleAssignAll = async () => {
     try {
-      await apiRequest("DELETE", `/quiz/${id}`);
-      fetchInitialData();
-      message.success("Deleted successfully");
-    } catch (error: any) {
-      message.error(error?.message);
+      setLoading(true);
+      const quizId = params.quizId;
+      const users = await apiRequest("GET", `/account/get/every/${quizId}`);
+      const response = await apiRequest(
+        "POST",
+        `/quiz/assign/${quizId}`,
+        users,
+      );
+      if (response) {
+        setLoading(false);
+        router.push("/quiz");
+        message.success(response.message);
+      }
+    } catch (error) {
+      message.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const cancel: PopconfirmProps["onCancel"] = (e) => {
-    return;
+  const handleAssignSelected = async () => {
+    try {
+      setLoading(true);
+      const quizId = params.quizId;
+      const response = await apiRequest("POST", `/quiz/assign/${quizId}`, {
+        users: selectedUsers,
+      });
+      if (response) {
+        setLoading(false);
+        router.push("/quiz");
+        message.success(response.message);
+      }
+    } catch (error) {
+      message.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
-  //::==================================================================
 
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl">
-        <Breadcrumb pageName="Quiz" />
+        <Breadcrumb pageName="Assign" />
         <div className="overflow-x-auto">
           <div className="min-w-fit rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
-            <div className="flex items-center justify-between px-4 py-3 md:px-6 xl:px-9">
+            <div className="flex justify-between px-4 py-3 md:px-6 xl:px-9">
               <div className="max-w-[30%] max-[800px]:max-w-[50%]">
                 <input
                   onChange={(e) => handleSearch(e.target.value)}
                   value={search}
                   type="text"
-                  placeholder="Search Quiz"
+                  placeholder="Search User"
                   className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                 />
               </div>
-              <div className="max-w-[30%]">
-                <Link
-                  href="/quiz/create"
-                  className=" rounded-md bg-primary px-4 py-2 text-white"
+              <div className="max-w-[40%]">
+                <button
+                  className="ms-3 rounded-md bg-primary px-4 py-2 text-white"
+                  disabled={loading}
+                  onClick={handleAssignSelected}
                 >
-                  Create
-                </Link>
+                  Assign Selected Users
+                </button>
+                <button
+                  className="ms-3 rounded-md bg-primary px-4 py-2 text-white"
+                  disabled={loading}
+                  onClick={handleAssignAll}
+                >
+                  Assign All Users
+                </button>
               </div>
             </div>
 
             <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 ">
-              <div className="flex w-[15%] min-w-[100px] items-center">
-                <p className="font-medium">Quiz Name</p>
+              <div className="flex w-[15%] min-w-[200px] items-center">
+                <p className="font-medium">Assign</p>
               </div>
-              <div className=" w-[30%] min-w-[200px] items-center">
-                <p className="font-medium">Description</p>
+              <div className="flex w-[20%] min-w-[200px] items-center">
+                <p className="font-medium">Name</p>
+              </div>
+              <div className=" w-[35%] min-w-[200px] items-center">
+                <p className="font-medium">Email</p>
               </div>
               <div className="flex w-[15%] min-w-[100px] items-center">
                 <p className="font-medium">Status</p>
               </div>
               <div className="flex w-[25%] min-w-[100px] items-center">
-                <p className="font-medium">Create Date</p>
-              </div>
-              <div className="flex w-[15%] min-w-[200px] items-center">
-                <p className="font-medium">Action</p>
+                <p className="font-medium">Gender</p>
               </div>
             </div>
 
-            {data?.map((quiz: any) => (
+            {data?.map((user: any) => (
               <div
                 className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 "
-                key={quiz.id}
+                key={user.id}
               >
-                <div className="flex w-[15%] min-w-[100px] items-center">
-                  <p className="max-lines-1 font-medium">{quiz.name}</p>
+                <div className="flex w-[15%] min-w-[200px] items-center">
+                  <input
+                    className="h-[20px] w-[20px]"
+                    type="checkbox"
+                    checked={selectedUsers.some(
+                      (selected) => selected.id === user.id,
+                    )}
+                    onChange={() => handleSelectUser(user.id)}
+                  />
                 </div>
-                <div className=" w-[30%] min-w-[200px] items-center ">
-                  <p className="max-lines-1 font-medium ">{quiz.description}</p>
+                <div className="flex w-[20%] min-w-[200px] items-center">
+                  <p className="max-lines-1 font-medium">{user.name}</p>
+                </div>
+                <div className=" w-[35%] min-w-[200px] items-center ">
+                  <p className="max-lines-1 font-medium ">{user.email}</p>
                 </div>
                 <div className="flex w-[15%] min-w-[100px] items-center">
                   <p className="max-lines-1 font-medium">
-                    {quiz.status ? (
+                    {user.status ? (
                       <button>
                         <FontAwesomeIcon
                           icon={faToggleOn}
@@ -152,40 +224,7 @@ const QuizPage = () => {
                   </p>
                 </div>
                 <div className="flex w-[25%] min-w-[200px] items-center">
-                  <p className="max-lines-1 font-medium">
-                    {convertToCambodiaTime(quiz.createdAt)}
-                  </p>
-                </div>
-                <div className="flex w-[15%] min-w-[200px] items-center">
-                  <p className="max-lines-1 font-medium">
-                    <button className="me-1 rounded-md bg-blue-400 px-2 py-1 text-sm text-white">
-                      <FontAwesomeIcon icon={faEye} />
-                    </button>
-                    <Link
-                      href={`/quiz/assign/${quiz.id}/info`}
-                      className="me-1 rounded-md bg-blue-500 px-2 py-1 text-sm text-white"
-                    >
-                      <FontAwesomeIcon icon={faFileLines} />
-                    </Link>
-                    <Link
-                      href={`/quiz/assign/${quiz.id}`}
-                      className="me-1 rounded-md bg-primary px-2 py-1 text-sm text-white"
-                    >
-                      <FontAwesomeIcon icon={faUserPen} />
-                    </Link>
-                    <Popconfirm
-                      title="Delete the Quiz"
-                      description="Are you sure to delete this quiz?"
-                      onConfirm={() => confirm(quiz.id)}
-                      onCancel={cancel}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <button className="me-1 rounded-md bg-red px-2 py-1 text-sm text-white">
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </Popconfirm>
-                  </p>
+                  <p className="max-lines-1 font-medium">{user.gender}</p>
                 </div>
               </div>
             ))}
@@ -227,4 +266,4 @@ const QuizPage = () => {
   );
 };
 
-export default QuizPage;
+export default AssignPage;
