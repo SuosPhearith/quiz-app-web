@@ -15,6 +15,7 @@ import {
   faToggleOff,
   faToggleOn,
   faTrash,
+  faUnlockKeyhole,
   faUserPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Select, message } from "antd";
@@ -42,13 +43,19 @@ const UserPage = () => {
     setSearch(searchQuery);
     setPageSize(pageSizeQuery);
     setLoading(true);
-    const response = await apiRequest(
-      "GET",
-      `/account?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
-    );
-    setTotalPages(response.totalPages);
-    setData(response.data);
-    setLoading(false);
+    try {
+      const response = await apiRequest(
+        "GET",
+        `/account?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
+      );
+      if (response) {
+        setTotalPages(response.totalPages);
+        setData(response.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      message.error("something went wrong");
+    }
   };
   useEffect(() => {
     fetchInitialData();
@@ -116,6 +123,17 @@ const UserPage = () => {
   const handleUpdate = (id: number) => {
     getOne(id);
   };
+
+  // const toggleActive = async (id: number) => {
+  //   try {
+  //     const response = await apiRequest("PATCH", `/quiz/${id}`);
+  //     if (response) {
+  //       fetchInitialData();
+  //     }
+  //   } catch (error: any) {
+  //     message.error(error?.message);
+  //   }
+  // };
   //::======================================================================
 
   return (
@@ -198,7 +216,7 @@ const UserPage = () => {
                 <div className="flex w-[15%] min-w-[200px] items-center">
                   <div className="max-lines-1 font-medium">
                     <button className="me-1 rounded-md bg-blue-400 px-2 py-1 text-sm text-white">
-                      <FontAwesomeIcon icon={faEye} />
+                      <FontAwesomeIcon icon={faUnlockKeyhole} />
                     </button>
                     <button
                       onClick={() => handleUpdate(user.id)}

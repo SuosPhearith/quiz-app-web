@@ -11,11 +11,7 @@ export const metadata: Metadata = {
 const Profile = () => {
   return (
     <DefaultLayout>
-      <div className="mx-auto w-full max-w-[970px]">
-        <Breadcrumb pageName="Profile" />
-
-        <ProfileBox />
-      </div>
+      <Breadcrumb pageName="Profile" />
     </DefaultLayout>
   );
 };

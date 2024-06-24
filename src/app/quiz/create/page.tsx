@@ -13,6 +13,7 @@ const CreatePage = () => {
     name: "",
     description: "",
     passScore: "",
+    totalScore: "",
     questions: [
       {
         name: "",
@@ -30,6 +31,12 @@ const CreatePage = () => {
 
   const [quiz, setQuiz] = useState(initialQuizState);
 
+  const calculateTotalScore = (questions: any) => {
+    return questions.reduce((total: any, question: any) => {
+      return total + (parseInt(question.score) || 0);
+    }, 0);
+  };
+
   const handleQuizChange = (e: any) => {
     setQuiz({ ...quiz, [e.target.name]: e.target.value });
   };
@@ -40,7 +47,11 @@ const CreatePage = () => {
       ...updatedQuestions[index],
       [e.target.name]: e.target.value,
     };
-    setQuiz({ ...quiz, questions: updatedQuestions });
+    setQuiz({
+      ...quiz,
+      questions: updatedQuestions,
+      totalScore: calculateTotalScore(updatedQuestions),
+    });
   };
 
   const handleOptionChange = (qIndex: any, oIndex: any, e: any) => {
@@ -82,22 +93,24 @@ const CreatePage = () => {
 
   const addQuestion = () => {
     if (isCurrentQuestionValid()) {
+      const updatedQuestions = [
+        ...quiz.questions,
+        {
+          name: "",
+          type: "SINGLE",
+          score: "",
+          options: [
+            { letter: "A", name: "" },
+            { letter: "B", name: "" },
+            { letter: "C", name: "" },
+          ],
+          answer: [],
+        },
+      ];
       setQuiz({
         ...quiz,
-        questions: [
-          ...quiz.questions,
-          {
-            name: "",
-            type: "SINGLE",
-            score: "",
-            options: [
-              { letter: "A", name: "" },
-              { letter: "B", name: "" },
-              { letter: "C", name: "" },
-            ],
-            answer: [],
-          },
-        ],
+        questions: updatedQuestions,
+        totalScore: calculateTotalScore(updatedQuestions),
       });
     }
   };
@@ -108,7 +121,11 @@ const CreatePage = () => {
     }
     const updatedQuestions = [...quiz.questions];
     updatedQuestions.splice(qIndex, 1);
-    setQuiz({ ...quiz, questions: updatedQuestions });
+    setQuiz({
+      ...quiz,
+      questions: updatedQuestions,
+      totalScore: calculateTotalScore(updatedQuestions),
+    });
   };
 
   const isCurrentQuestionValid = () => {
@@ -146,7 +163,9 @@ const CreatePage = () => {
     }
     try {
       const response = await apiRequest("POST", "/quiz", quiz);
-      router.push("/quiz");
+      if (response) {
+        router.push("/quiz");
+      }
     } catch (error) {
       console.log(error);
       message.error("Cannot create");
@@ -165,7 +184,7 @@ const CreatePage = () => {
           <FontAwesomeIcon icon={faAngleLeft} className="me-1 h-[15px]" />
           Back
         </Link>
-        <div className="flex w-[70%] ">
+        <div className="flex w-[70%] items-center">
           <input
             type="text"
             name="name"
@@ -183,19 +202,26 @@ const CreatePage = () => {
             className="mx-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
           />
           <input
-            type="text"
+            type="number"
             name="passScore"
             value={quiz.passScore}
             onChange={handleQuizChange}
             placeholder="Pass Score"
             className="mx-3 w-[9rem] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
           />
-          <button
-            onClick={() => handleSubmit()}
-            className="min-h-full min-w-[150px] rounded-md bg-primary px-4 text-white"
-          >
-            Create Form
-          </button>
+          <div className="h-full min-w-[4rem] py-2">/ {quiz.totalScore}</div>
+          {isCurrentQuestionValid() ? (
+            <button
+              onClick={() => handleSubmit()}
+              className="min-h-full min-w-[150px] rounded-md bg-primary px-4 py-2 text-white"
+            >
+              Create Form
+            </button>
+          ) : (
+            <button className="min-h-full min-w-[150px] cursor-not-allowed rounded-md bg-gray-400 px-4 py-2 text-white">
+              Create Form
+            </button>
+          )}
         </div>
       </div>
       {quiz.questions.map((question, qIndex) => (
@@ -234,7 +260,7 @@ const CreatePage = () => {
               <option value="MULTIPLE">Multiple answers</option>
             </select>
             <input
-              type="text"
+              type="number"
               name="score"
               value={question.score}
               onChange={(e) => handleQuestionChange(qIndex, e)}
