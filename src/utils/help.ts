@@ -14,7 +14,7 @@ export const saveToken = (accessToken: string, refreshToken: string) => {
 
 export const logout = () => {
   localStorage.clear();
-  window.location.href = "/";
+  window.location.href = "/auth/signin";
 };
 
 export const convertToCambodiaTime = (utcTimestamp: any) => {

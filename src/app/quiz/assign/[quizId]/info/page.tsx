@@ -35,6 +35,8 @@ interface QuizData {
   id: number;
   name: string;
   description: string;
+  totalScore: number;
+  passScore: number;
   status: boolean;
   createdAt: string;
   createdBy: number;
@@ -108,7 +110,12 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
         </Link>
         <div className="flex h-full w-2/3 items-center justify-between ">
           <div className="max-lines-1 w-2/3 text-lg">Title : {data.name}</div>
-          <div className="max-lines-1 w-1/3 text-lg">Pass Score : 50pt</div>
+          <div className="max-lines-1 w-1/3 text-lg">
+            Pass Score : {data.passScore} pt
+          </div>
+          <div className="max-lines-1 w-1/3 text-lg">
+            Total Score : {data.totalScore} pt
+          </div>
         </div>
       </div>
       <div className="mt-2 flex w-full items-center justify-between rounded-md bg-white">

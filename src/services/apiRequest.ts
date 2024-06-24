@@ -11,8 +11,20 @@ import { logout, saveToken } from "../utils/help";
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 //::==>> start core function
-async function apiRequest(method: string, url: string, data = {}) {
-  //::==>> get accessToken from localstroage for make request
+async function apiRequest(
+  method: string,
+  url: string,
+  data = {},
+  retry = false,
+) {
+  //:: validate
+  const isAccessToken = localStorage.getItem("accessToken");
+  const isRefreshToken = localStorage.getItem("refreshToken");
+  const isRole = localStorage.getItem("role");
+  if (!isAccessToken || !isRefreshToken || !isRole) {
+    return logout();
+  }
+  //::==>> get accessToken from localstorage for make request
   let accessToken = localStorage.getItem("accessToken");
 
   try {
@@ -20,7 +32,7 @@ async function apiRequest(method: string, url: string, data = {}) {
     const response = await axios.request({
       //::==>> method for make request
       method,
-      //::==>> connect baseUrl with url provieded
+      //::==>> connect baseUrl with url provided
       url: baseUrl + url,
       //::==>> get data
       data,
@@ -39,18 +51,23 @@ async function apiRequest(method: string, url: string, data = {}) {
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      //::==>> is condition we call api to get accessToken by using refreshToken
-      try {
-        //::==>> call method refreshToken to implement
-        await refreshToken();
-        //::==>> make request again after restore token by refreshToken function
-        return apiRequest(method, url, data);
-      } catch (refreshError) {
-        //::==>> logout from system
+      //::==>> if this is the first attempt to refresh token
+      if (!retry) {
+        try {
+          //::==>> call method refreshToken to implement
+          await refreshToken();
+          //::==>> make request again after restore token by refreshToken function
+          return apiRequest(method, url, data, true);
+        } catch (refreshError) {
+          //::==>> logout from system
+          logout();
+        }
+      } else {
+        //::==>> if already tried refreshing token, logout
         logout();
       }
     } else {
-      throw new Error(error.response.data.message);
+      // throw new Error(error.response.data.message);
     }
   }
 }

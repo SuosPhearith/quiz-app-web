@@ -41,11 +41,15 @@ export default function SigninWithPassword() {
         response.refreshToken,
         response.user.roleId,
       );
-      //::==>> redirect back
-      window.location.href = "/";
+      localStorage.setItem("name", response.user.name);
+      localStorage.setItem("email", response.user.email);
     },
     onSuccess: (data) => {
-      window.location.href = "/";
+      if (localStorage.getItem("role") === "1") {
+        window.location.href = "/";
+      } else {
+        window.location.href = "/my-quiz";
+      }
     },
     onError: (error: any) => {
       console.error(error);

@@ -11,12 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
   faFileLines,
+  faFileSignature,
   faToggleOff,
   faToggleOn,
   faTrash,
   faUserPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { Popconfirm, PopconfirmProps, message } from "antd";
+import UserLayout from "@/components/Layouts/UserLayout";
 
 const QuizPage = () => {
   const router = useRouter();
@@ -40,7 +42,7 @@ const QuizPage = () => {
     try {
       const response = await apiRequest(
         "GET",
-        `/quiz?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
+        `/user-quiz?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
       );
       if (response) {
         setTotalPages(response.totalPages);
@@ -80,24 +82,11 @@ const QuizPage = () => {
   const cancel: PopconfirmProps["onCancel"] = (e) => {
     return;
   };
-
-  const toggleActive = async (id: number) => {
-    try {
-      const response = await apiRequest("PATCH", `/quiz/${id}`);
-      if (response) {
-        fetchInitialData();
-      }
-    } catch (error: any) {
-      message.error(error?.message);
-    }
-  };
-
   //::==================================================================
 
   return (
-    <DefaultLayout>
-      <div className="mx-auto max-w-7xl">
-        <Breadcrumb pageName="Quiz" />
+    <UserLayout>
+      <div className="mx-auto mt-4 max-w-7xl">
         <div className="overflow-x-auto">
           <div className="min-w-fit rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
             <div className="flex items-center justify-between px-4 py-3 md:px-6 xl:px-9">
@@ -110,14 +99,7 @@ const QuizPage = () => {
                   className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                 />
               </div>
-              <div className="max-w-[30%]">
-                <Link
-                  href="/quiz/create"
-                  className=" rounded-md bg-primary px-4 py-2 text-white"
-                >
-                  Create
-                </Link>
-              </div>
+              <div className="max-w-[30%]"></div>
             </div>
 
             <div className="flex justify-between border-t border-stroke px-4 py-4.5 dark:border-dark-3 ">
@@ -128,7 +110,7 @@ const QuizPage = () => {
                 <p className="font-medium">Description</p>
               </div>
               <div className="flex w-[15%] min-w-[100px] items-center">
-                <p className="font-medium">Status</p>
+                <p className="font-medium">Assigner</p>
               </div>
               <div className="flex w-[25%] min-w-[100px] items-center">
                 <p className="font-medium">Create Date</p>
@@ -144,67 +126,32 @@ const QuizPage = () => {
                 key={quiz.id}
               >
                 <div className="flex w-[15%] min-w-[100px] items-center">
-                  <p className="max-lines-1 font-medium">{quiz.name}</p>
+                  <p className="max-lines-1 font-medium">{quiz.quiz.name}</p>
                 </div>
                 <div className=" w-[30%] min-w-[200px] items-center ">
-                  <p className="max-lines-1 font-medium ">{quiz.description}</p>
+                  <p className="max-lines-1 font-medium ">
+                    {quiz.quiz.description}
+                  </p>
                 </div>
                 <div className="flex w-[15%] min-w-[100px] items-center">
-                  <p className="max-lines-1 font-medium">
-                    {quiz.status ? (
-                      <button onClick={() => toggleActive(quiz.id)}>
-                        <FontAwesomeIcon
-                          icon={faToggleOn}
-                          className="h-[25px]"
-                        />
-                      </button>
-                    ) : (
-                      <button onClick={() => toggleActive(quiz.id)}>
-                        <FontAwesomeIcon
-                          icon={faToggleOff}
-                          className="h-[25px]"
-                        />
-                      </button>
-                    )}
-                  </p>
+                  <p className="max-lines-1 font-medium ">{quiz.assigner}</p>
                 </div>
                 <div className="flex w-[25%] min-w-[200px] items-center">
                   <p className="max-lines-1 font-medium">
-                    {convertToCambodiaTime(quiz.createdAt)}
+                    {convertToCambodiaTime(quiz.quiz.createdAt)}
                   </p>
                 </div>
                 <div className="flex w-[15%] min-w-[200px] items-center">
                   <p className="max-lines-1 font-medium">
-                    <Link
-                      href={`/quiz/assign/${quiz.id}/result`}
-                      className="me-1 rounded-md bg-blue-400 px-2 py-1 text-sm text-white"
-                    >
+                    <button className="me-1 rounded-md bg-blue-400 px-2 py-1 text-sm text-white">
                       <FontAwesomeIcon icon={faEye} />
-                    </Link>
+                    </button>
                     <Link
-                      href={`/quiz/assign/${quiz.id}/info`}
+                      href={`/my-quiz/${quiz.quiz.id}/do-quiz`}
                       className="me-1 rounded-md bg-blue-500 px-2 py-1 text-sm text-white"
                     >
-                      <FontAwesomeIcon icon={faFileLines} />
+                      <FontAwesomeIcon icon={faFileSignature} />
                     </Link>
-                    <Link
-                      href={`/quiz/assign/${quiz.id}`}
-                      className="me-1 rounded-md bg-primary px-2 py-1 text-sm text-white"
-                    >
-                      <FontAwesomeIcon icon={faUserPen} />
-                    </Link>
-                    <Popconfirm
-                      title="Delete the Quiz"
-                      description="Are you sure to delete this quiz?"
-                      onConfirm={() => confirm(quiz.id)}
-                      onCancel={cancel}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <button className="me-1 rounded-md bg-red px-2 py-1 text-sm text-white">
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </Popconfirm>
                   </p>
                 </div>
               </div>
@@ -243,7 +190,7 @@ const QuizPage = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </UserLayout>
   );
 };
 
