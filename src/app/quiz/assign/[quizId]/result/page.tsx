@@ -151,7 +151,7 @@ const ResultPage: React.FC<AssignPageProps> = ({ params }) => {
                 </div>
                 <div className="flex w-[15%] min-w-[100px] items-center">
                   <p className="max-lines-1 font-medium">
-                    {quiz.isPas ? (
+                    {quiz.isPass ? (
                       <div className="text-primary">Pass</div>
                     ) : (
                       <div className="text-red">Fail</div>

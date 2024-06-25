@@ -34,11 +34,8 @@ const DataStatsOne: React.FC<dataStats> = () => {
   return (
     <>
       <div className="mt-7 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-        <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
-          <div
-            className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: "#3FD97F" }}
-          >
+        <div className="flex flex-col items-center justify-center rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
+          <div className="flex h-14.5 w-14.5 items-center justify-center rounded-full bg-orange-400">
             <svg
               width="26"
               height="26"
@@ -70,21 +67,13 @@ const DataStatsOne: React.FC<dataStats> = () => {
               />
             </svg>
           </div>
-
-          <div className="mt-6 flex items-end justify-between">
-            <div>
-              <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                {data.totalAdmins}
-              </h4>
-              <span className="text-body-sm font-medium">Total Admins</span>
-            </div>
+          <div className="my-2 text-2xl font-semibold text-black dark:text-white">
+            {data.totalAdmins}
           </div>
+          <div className="text-lg">Total Admins</div>
         </div>
-        <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
-          <div
-            className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: "#FF9C55" }}
-          >
+        <div className="flex flex-col items-center justify-center rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
+          <div className="flex h-14.5 w-14.5 items-center justify-center rounded-full bg-green-500">
             <svg
               width="26"
               height="26"
@@ -116,21 +105,13 @@ const DataStatsOne: React.FC<dataStats> = () => {
               />
             </svg>
           </div>
-
-          <div className="mt-6 flex items-end justify-between">
-            <div>
-              <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                {data.totalUsers}
-              </h4>
-              <span className="text-body-sm font-medium">Total Users</span>
-            </div>
+          <div className="my-2 text-2xl font-semibold text-black dark:text-white">
+            {data.totalUsers}
           </div>
+          <div className="text-lg">Total Users</div>
         </div>
-        <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
-          <div
-            className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: "#8155FF" }}
-          >
+        <div className="flex flex-col items-center justify-center rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
+          <div className="flex h-14.5 w-14.5 items-center justify-center rounded-full bg-purple-900">
             <svg
               width="26"
               height="26"
@@ -156,21 +137,13 @@ const DataStatsOne: React.FC<dataStats> = () => {
               </g>
             </svg>
           </div>
-
-          <div className="mt-6 flex items-end justify-between">
-            <div>
-              <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                {data.totalQuizzes}
-              </h4>
-              <span className="text-body-sm font-medium">Total Quizzes</span>
-            </div>
+          <div className="my-2 text-2xl font-semibold text-black dark:text-white">
+            {data.totalQuizzes}
           </div>
+          <div className="text-lg">Total Quizzes</div>
         </div>
-        <div className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
-          <div
-            className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: "#18BFFF" }}
-          >
+        <div className="flex flex-col items-center justify-center rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark">
+          <div className="flex h-14.5 w-14.5 items-center justify-center rounded-full bg-pink-400">
             <svg
               width="26"
               height="26"
@@ -190,15 +163,10 @@ const DataStatsOne: React.FC<dataStats> = () => {
               />
             </svg>
           </div>
-
-          <div className="mt-6 flex items-end justify-between">
-            <div>
-              <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                {data.totalResults}
-              </h4>
-              <span className="text-body-sm font-medium">Total Results</span>
-            </div>
+          <div className="my-2 text-2xl font-semibold text-black dark:text-white">
+            {data.totalResults}
           </div>
+          <div className="text-lg">Total Results</div>
         </div>
       </div>
     </>

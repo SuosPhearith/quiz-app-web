@@ -43,6 +43,7 @@ export default function SigninWithPassword() {
       );
       localStorage.setItem("name", response.user.name);
       localStorage.setItem("email", response.user.email);
+      localStorage.setItem("avatar", response.user.avatar);
     },
     onSuccess: (data) => {
       if (localStorage.getItem("role") === "1") {

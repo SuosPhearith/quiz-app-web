@@ -144,12 +144,16 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
   };
   return (
     <UserLayout>
-      <div className="flex w-full flex-col items-center rounded-md bg-white">
-        <div className="flex w-full items-center justify-around px-2 py-3">
-          <div className="w-1/4">Title : {data.quiz.name}</div>
-          <div className="w-1/4">Pass Score : {data.quiz.passScore}pt</div>
-          <div className="w-1/4">Full Score : {data.quiz.totalScore}px</div>
-          <div className="w-1/4">Assigner : {data.assigner}</div>
+      <div className="flex w-full flex-col items-center rounded-md bg-white dark:bg-gray-dark dark:shadow-card">
+        <div className="flex w-full items-center justify-around px-2 py-3 max-[850px]:flex-col max-[850px]:items-start">
+          <div className="min-w-[200px]">Title : {data.quiz.name}</div>
+          <div className="min-w-[150px]">
+            Pass Score : {data.quiz.passScore}pt
+          </div>
+          <div className="min-w-[150px]">
+            Full Score : {data.quiz.totalScore}px
+          </div>
+          <div className="min-w-[250px]">Assigner : {data.assigner}</div>
         </div>
         <div className="flex w-full justify-start px-2 py-3">
           Description : {data.quiz.description}
@@ -159,16 +163,16 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
       {data.quiz.questions.map((question, index) => (
         <div
           key={question.id}
-          className="my-3 flex w-full flex-col justify-center rounded-md"
+          className="my-3 flex w-full flex-col justify-center rounded-md dark:bg-gray-dark dark:shadow-card"
         >
-          <div className="bg-slate-200 px-9 py-3">
+          <div className="bg-slate-200 px-9 py-3 dark:bg-gray-dark dark:shadow-card">
             {index + 1} . {question.name}{" "}
             <span className="text-primary">{question.score}pt</span>
           </div>
           {question.option.map((option) => (
             <div
               key={option.id}
-              className="mt-1 flex items-center bg-white px-9 py-3"
+              className="mt-1 flex items-center bg-white px-9 py-3 dark:bg-gray-dark dark:shadow-card"
             >
               <input
                 className="h-[20px] w-[20px]"
