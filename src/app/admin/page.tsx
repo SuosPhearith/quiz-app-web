@@ -46,7 +46,7 @@ const UserPage = () => {
     try {
       const response = await apiRequest(
         "GET",
-        `/account?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
+        `/account/get/add-admin?page=${pageQuery}&key=${searchQuery}&pageSize=${pageSizeQuery}`,
       );
       if (response) {
         setTotalPages(response.totalPages);
@@ -143,7 +143,7 @@ const UserPage = () => {
       }
       try {
         setLoading(true);
-        const response = await apiRequest("POST", "/account", {
+        const response = await apiRequest("POST", "/account/create-admin", {
           name: data.name,
           email: data.email,
           password: data.password,
@@ -206,7 +206,7 @@ const UserPage = () => {
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl">
-        <Breadcrumb pageName="User" />
+        <Breadcrumb pageName="Admin" />
         <div className="overflow-x-auto">
           <div className="min-w-fit rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
             <div className="flex justify-between px-4 py-3 md:px-6 xl:px-9">
@@ -364,7 +364,7 @@ const UserPage = () => {
               {...register("name", { required: true, minLength: 3 })}
               type="text"
               placeholder="Name"
-              className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 "
+              className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2"
             />
             <input
               {...register("email", {
@@ -373,14 +373,14 @@ const UserPage = () => {
               })}
               type="text"
               placeholder="Email"
-              className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 "
+              className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2"
             />
             {!isUpdate && (
               <input
                 {...register("password")}
                 type="password"
                 placeholder="Password"
-                className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 "
+                className="my-2 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3  text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2"
               />
             )}
 
@@ -388,7 +388,7 @@ const UserPage = () => {
               {...register("gender", { required: true })}
               id="gender"
               name="gender"
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm "
             >
               <option value="" className="hidden">
                 Select Gender

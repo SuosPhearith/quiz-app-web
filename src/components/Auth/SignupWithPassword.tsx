@@ -1,103 +1,110 @@
 "use client";
 import React, { useState } from "react";
-import authRequest from "../../../src/services/authRequest";
-import Link from "next/link";
-import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Loader from "../common/Loader";
 import Spinner from "../Spinner";
-import { saveTokenLogin } from "@/utils/help";
+import { message } from "antd";
+import apiRequest from "@/services/apiRequest";
+import authRequest from "@/services/authRequest";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+//::==>> get base url from .env
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+// import { useRouter } from "next/navigation";
 
 type Inputs = {
+  name: string;
+  gender: string;
   email: string;
   password: string;
 };
 
-export default function SigninWithPassword() {
-  const [error, setError] = useState("");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
-
-  const {
-    mutate: Login,
-    isError,
-    isPending,
-  } = useMutation({
-    mutationFn: async (data: Inputs) => {
-      const userAgent = navigator.userAgent;
-      const response = await authRequest("/auth/signIn", {
-        email: data.email,
-        password: data.password,
-        userAgent,
-      });
-      //::==>> save data to localstorage
-      saveTokenLogin(
-        response.accessToken,
-        response.refreshToken,
-        response.user.roleId,
-      );
-      localStorage.setItem("name", response.user.name);
-      localStorage.setItem("email", response.user.email);
-      localStorage.setItem("avatar", response.user.avatar);
-    },
-    onSuccess: (data) => {
-      if (localStorage.getItem("role") === "1") {
-        window.location.href = "/";
-      } else {
-        window.location.href = "/my-quiz";
+export default function SignupWithPassword() {
+  const [isPending, setIsPenning] = useState(false);
+  const { register, handleSubmit } = useForm<Inputs>();
+  const router = useRouter();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (data.password.length < 7) {
+      return message.error("Password must me logger that 8 charaters");
+    }
+    try {
+      setIsPenning(true);
+      const response = await axios.post(`${baseUrl}/auth/signUp`, data);
+      console.log(response);
+      if (response) {
+        message.success("Created successfully");
+        router.push("/auth/signin");
       }
-    },
-    onError: (error: any) => {
-      console.error(error);
-      if (axios.isAxiosError(error) && error.response) {
-        console.error("Error response data:", error.response.data);
-        setError(
-          error.response.data.message || "Signin failed. Please try again.",
-        );
-      } else {
-        setError("Signin failed. Please try again.");
-      }
-    },
-  });
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    Login(data);
+    } catch (error: any) {
+      message.error(error?.response?.data?.message);
+    } finally {
+      setIsPenning(false);
+    }
   };
-
   return (
     <div>
-      {error && (
-        <div className="flex w-full rounded-[10px] border-l-6 border-[#FFB800] bg-[#FEF5DE] px-7 py-8 dark:bg-[#1B1B24] dark:bg-opacity-30 md:p-9">
-          <div className="mr-5 flex h-9 w-9 items-center justify-center rounded-lg bg-[#FBBF24]">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M2.5 8.68038C2.5 6.01573 2.5 4.6834 2.8146 4.23518C3.12919 3.78695 4.38194 3.35813 6.88743 2.5005L7.36477 2.3371C8.67082 1.89004 9.32384 1.6665 10 1.6665C10.6762 1.6665 11.3292 1.89004 12.6352 2.3371L13.1126 2.5005C15.6181 3.35813 16.8708 3.78695 17.1854 4.23518C17.5 4.6834 17.5 6.01573 17.5 8.68038V9.99264C17.5 14.691 13.9675 16.9711 11.7512 17.9392C11.15 18.2019 10.8494 18.3332 10 18.3332C9.15062 18.3332 8.85001 18.2019 8.2488 17.9392C6.03247 16.9711 2.5 14.691 2.5 9.99264V8.68038ZM10 6.0415C10.3452 6.0415 10.625 6.32133 10.625 6.6665V9.99984C10.625 10.345 10.3452 10.6248 10 10.6248C9.65482 10.6248 9.375 10.345 9.375 9.99984V6.6665C9.375 6.32133 9.65482 6.0415 10 6.0415ZM10 13.3332C10.4602 13.3332 10.8333 12.9601 10.8333 12.4998C10.8333 12.0396 10.4602 11.6665 10 11.6665C9.53976 11.6665 9.16667 12.0396 9.16667 12.4998C9.16667 12.9601 9.53976 13.3332 10 13.3332Z"
-                fill="white"
-              />
-            </svg>
-          </div>
-          <div className="w-full">
-            <h5 className="mb-3.5 text-lg font-bold leading-[22px] text-[#9D5425]">
-              Sign In fail
-            </h5>
-            <p className="w-full max-w-[740px] text-[#D0915C]">{error}</p>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4">
+          <label
+            htmlFor="name"
+            className="mb-2.5 block font-medium text-dark dark:text-white"
+          >
+            Name
+          </label>
+          <div className="relative">
+            <input
+              {...register("name", { required: true, minLength: 2 })}
+              type="text"
+              placeholder="Enter your name"
+              name="name"
+              className="w-full rounded-lg border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+            />
+
+            <span className="absolute right-4.5 top-1/2 -translate-y-1/2">
+              <svg
+                className="fill-current"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M11.9999 1.25C9.37654 1.25 7.24989 3.37665 7.24989 6C7.24989 8.62335 9.37654 10.75 11.9999 10.75C14.6232 10.75 16.7499 8.62335 16.7499 6C16.7499 3.37665 14.6232 1.25 11.9999 1.25ZM8.74989 6C8.74989 4.20507 10.205 2.75 11.9999 2.75C13.7948 2.75 15.2499 4.20507 15.2499 6C15.2499 7.79493 13.7948 9.25 11.9999 9.25C10.205 9.25 8.74989 7.79493 8.74989 6Z"
+                  fill=""
+                />
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M11.9999 12.25C9.68634 12.25 7.55481 12.7759 5.97534 13.6643C4.41937 14.5396 3.24989 15.8661 3.24989 17.5L3.24982 17.602C3.24869 18.7638 3.24728 20.222 4.5263 21.2635C5.15577 21.7761 6.03637 22.1406 7.2261 22.3815C8.41915 22.6229 9.97412 22.75 11.9999 22.75C14.0257 22.75 15.5806 22.6229 16.7737 22.3815C17.9634 22.1406 18.844 21.7761 19.4735 21.2635C20.7525 20.222 20.7511 18.7638 20.75 17.602L20.7499 17.5C20.7499 15.8661 19.5804 14.5396 18.0244 13.6643C16.445 12.7759 14.3134 12.25 11.9999 12.25ZM4.74989 17.5C4.74989 16.6487 5.37127 15.7251 6.71073 14.9717C8.02669 14.2315 9.89516 13.75 11.9999 13.75C14.1046 13.75 15.9731 14.2315 17.289 14.9717C18.6285 15.7251 19.2499 16.6487 19.2499 17.5C19.2499 18.8078 19.2096 19.544 18.5263 20.1004C18.1558 20.4022 17.5364 20.6967 16.4761 20.9113C15.4192 21.1252 13.9741 21.25 11.9999 21.25C10.0257 21.25 8.58063 21.1252 7.52368 20.9113C6.46341 20.6967 5.84401 20.4022 5.47348 20.1004C4.79021 19.544 4.74989 18.8078 4.74989 17.5Z"
+                  fill=""
+                />
+              </svg>
+            </span>
           </div>
         </div>
-      )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4">
+          <label
+            htmlFor="gender"
+            className="mb-2.5 block font-medium text-dark dark:text-white"
+          >
+            Gender
+          </label>
+          <select
+            {...register("gender", { required: true })}
+            id="gender"
+            name="gender"
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-4 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+          >
+            <option value="" className="hidden">
+              Select Gender
+            </option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -182,7 +189,7 @@ export default function SigninWithPassword() {
             type="submit"
             className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
           >
-            {isPending ? <Spinner /> : "Sign In"}
+            {isPending ? <Spinner /> : "Sign Up"}
           </button>
         </div>
       </form>

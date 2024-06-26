@@ -80,7 +80,7 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
   if (!data) {
     return (
       <DefaultLayout>
-        <div className="flex h-[50px] w-full items-center justify-between rounded-md bg-white">
+        <div className="flex h-[50px] w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card">
           <Link
             href="/quiz"
             className="ms-2 flex cursor-pointer items-center rounded-sm px-3 text-primary"
@@ -89,7 +89,7 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
             Back
           </Link>
         </div>
-        <div className="mt-2 flex w-full items-center justify-between rounded-md bg-white">
+        <div className="mt-2 flex w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card">
           <div className="ms-2 py-3 text-lg">
             No data available for the selected quiz.
           </div>
@@ -100,7 +100,7 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
 
   return (
     <DefaultLayout>
-      <div className="flex h-[50px] w-full items-center justify-between rounded-md bg-white">
+      <div className="flex h-[50px] w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card max-[800px]:h-fit">
         <Link
           href="/quiz"
           className="ms-2 flex cursor-pointer items-center rounded-sm px-3 text-primary"
@@ -108,17 +108,19 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
           <FontAwesomeIcon icon={faAngleLeft} className="me-1 h-[15px]" />
           Back
         </Link>
-        <div className="flex h-full w-2/3 items-center justify-between ">
-          <div className="max-lines-1 w-2/3 text-lg">Title : {data.name}</div>
-          <div className="max-lines-1 w-1/3 text-lg">
+        <div className="flex h-full w-[80%] items-center justify-between max-[800px]:flex-col ">
+          <div className="max-lines-1 min-w-[200px] text-lg">
+            Title : {data.name}
+          </div>
+          <div className="max-lines-1 min-w-[200px] text-lg">
             Pass Score : {data.passScore} pt
           </div>
-          <div className="max-lines-1 w-1/3 text-lg">
+          <div className="max-lines-1 min-w-[200px] text-lg">
             Total Score : {data.totalScore} pt
           </div>
         </div>
       </div>
-      <div className="mt-2 flex w-full items-center justify-between rounded-md bg-white">
+      <div className="mt-2 flex w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card">
         <div className="ms-2 py-3 text-lg">
           Description : {data.description}
         </div>
@@ -126,9 +128,9 @@ const InfoPage: React.FC<AssignPageProps> = ({ params }) => {
       {data.questions.map((question) => (
         <div
           key={question.id}
-          className="mt-2 flex w-full items-center justify-between rounded-md bg-white"
+          className="mt-2 flex w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card max-[600px]:flex-col"
         >
-          <div className="m-5 w-1/3 ">
+          <div className="m-5 w-1/3 max-[1000px]:w-1/2 ">
             <div className="my-1">Question: {question.name}</div>
             <div className="my-1">Type: {question.type}</div>
             <div className="my-1">Score: {question.score}pt</div>

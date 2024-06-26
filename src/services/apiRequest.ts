@@ -67,7 +67,7 @@ async function apiRequest(
         logout();
       }
     } else {
-      // throw new Error(error.response.data.message);
+      throw new Error(error.response.data.message);
     }
   }
 }

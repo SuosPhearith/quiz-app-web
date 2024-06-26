@@ -64,7 +64,7 @@ const CreatePage = () => {
   };
 
   const handleAnswerChange = (qIndex: any, oIndex: any, e: any) => {
-    const updatedQuestions = [...quiz.questions];
+    const updatedQuestions: any = [...quiz.questions];
     const selectedLetter = updatedQuestions[qIndex].options[oIndex].letter;
 
     if (e.target.checked) {
@@ -75,7 +75,7 @@ const CreatePage = () => {
       }
     } else {
       updatedQuestions[qIndex].answer = updatedQuestions[qIndex].answer.filter(
-        (ans) => ans.letter !== selectedLetter,
+        (ans: any) => ans.letter !== selectedLetter,
       );
     }
 
@@ -176,7 +176,7 @@ const CreatePage = () => {
 
   return (
     <DefaultLayout>
-      <div className="m-2 flex h-[50px] w-full items-center justify-between rounded-md bg-white">
+      <div className="max-[1200px] m-2 flex h-[50px] w-full items-center justify-between rounded-md bg-white py-4 dark:bg-gray-dark dark:shadow-card max-[1200px]:h-fit max-[1200px]:flex-col">
         <Link
           href="/quiz"
           className="ms-2 flex cursor-pointer items-center rounded-sm px-3 text-primary"
@@ -184,14 +184,14 @@ const CreatePage = () => {
           <FontAwesomeIcon icon={faAngleLeft} className="me-1 h-[15px]" />
           Back
         </Link>
-        <div className="flex w-[70%] items-center">
+        <div className="flex w-[90%] items-center max-[1200px]:flex-col max-[1200px]:justify-start">
           <input
             type="text"
             name="name"
             value={quiz.name}
             onChange={handleQuizChange}
             placeholder="Quiz Title"
-            className="mx-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+            className="mx-3 w-full  min-w-[120px] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary max-[12000px]:mt-1"
           />
           <input
             type="text"
@@ -199,7 +199,7 @@ const CreatePage = () => {
             value={quiz.description}
             onChange={handleQuizChange}
             placeholder="Quiz Description"
-            className="mx-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+            className="mx-3 w-full min-w-[150px] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary max-[12000px]:mt-1"
           />
           <input
             type="number"
@@ -207,9 +207,11 @@ const CreatePage = () => {
             value={quiz.passScore}
             onChange={handleQuizChange}
             placeholder="Pass Score"
-            className="mx-3 w-[9rem] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+            className="mx-3 w-full   min-w-[120px] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary max-[12000px]:mt-1"
           />
-          <div className="h-full min-w-[4rem] py-2">/ {quiz.totalScore}</div>
+          <div className="h-full min-w-[120px] py-2">
+            Full Scroe : {quiz.totalScore}
+          </div>
           {isCurrentQuestionValid() ? (
             <button
               onClick={() => handleSubmit()}
@@ -218,7 +220,7 @@ const CreatePage = () => {
               Create Form
             </button>
           ) : (
-            <button className="min-h-full min-w-[150px] cursor-not-allowed rounded-md bg-gray-400 px-4 py-2 text-white">
+            <button className="min-h-full  w-full min-w-[150px] cursor-not-allowed rounded-md bg-gray-400 px-4 py-2 text-white">
               Create Form
             </button>
           )}
@@ -227,9 +229,9 @@ const CreatePage = () => {
       {quiz.questions.map((question, qIndex) => (
         <div
           key={qIndex}
-          className="m-2 flex w-full items-center justify-between rounded-md bg-white"
+          className="m-2 flex w-full items-center justify-between rounded-md bg-white dark:bg-gray-dark dark:shadow-card max-[600px]:flex-col"
         >
-          <div className="w-1/3">
+          <div className="w-[45%] max-[600px]:w-[80%]">
             <div className="ms-4 mt-2 flex items-center justify-between">
               <div>Question {qIndex + 1}</div>
               <button
@@ -251,7 +253,7 @@ const CreatePage = () => {
               name="type"
               value={question.type}
               onChange={(e) => handleQuestionChange(qIndex, e)}
-              className="m-3 block w-full rounded-md border border-gray-300 bg-white px-3 py-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              className="m-3 block w-full rounded-md border border-gray-300 bg-white px-3 py-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary sm:text-sm"
             >
               <option value="" className="hidden">
                 Select Question Type
@@ -268,26 +270,26 @@ const CreatePage = () => {
               className="m-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
             />
           </div>
-          <div className="w-1/2">
+          <div className="w-1/2 max-[600px]:w-[85%]">
             {question.options.map((opt, oIndex) => (
-              <div className="my-2 flex w-full items-center" key={oIndex}>
-                <div className="">
+              <div className="my-2 ms-7 flex w-full items-center" key={oIndex}>
+                <div className="w-[5%]">
                   <input
                     className="h-[20px] w-[20px]"
                     type="checkbox"
                     checked={question.answer.some(
-                      (ans) => ans.letter === opt.letter,
+                      (ans: any) => ans.letter === opt.letter,
                     )}
                     onChange={(e) => handleAnswerChange(qIndex, oIndex, e)}
                   />
                 </div>
-                <div className="w-2/3">
+                <div className="w-[80%]">
                   <input
                     type="text"
                     value={opt.name}
                     onChange={(e) => handleOptionChange(qIndex, oIndex, e)}
                     placeholder="Option"
-                    className="m-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                    className="mx-3 w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   />
                 </div>
               </div>
