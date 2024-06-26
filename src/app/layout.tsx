@@ -17,7 +17,7 @@ export default function RootLayout({
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 100);
+    setTimeout(() => setLoading(false), 200);
   }, []);
 
   return (

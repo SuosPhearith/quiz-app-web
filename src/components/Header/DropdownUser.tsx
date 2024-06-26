@@ -15,13 +15,13 @@ const DropdownUser = () => {
         className="flex items-center gap-4"
         href="#"
       >
-        <div className="flex min-h-10 min-w-10 rounded-full">
+        <div className="flex h-10 w-10 rounded-full">
           <Image
             width={40}
             height={40}
             src={`${imageUrl}${localStorage.getItem("avatar")}`}
             alt="User"
-            className="rounded-full object-cover"
+            className="h-full w-full rounded-full object-cover"
           />
         </div>
 
@@ -54,13 +54,13 @@ const DropdownUser = () => {
           className={`absolute right-0 mt-2 flex w-[280px] flex-col rounded-lg border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
         >
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
-            <div className="flex min-h-10 min-w-10 rounded-full">
+            <div className="flex h-10 w-10 rounded-full">
               <Image
                 width={40}
                 height={40}
                 src={`${imageUrl}${localStorage.getItem("avatar")}`}
                 alt="User"
-                className="rounded-full object-cover"
+                className="h-full w-full rounded-full object-cover"
               />
             </div>
 

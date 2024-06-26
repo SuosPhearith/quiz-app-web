@@ -206,7 +206,7 @@ const UserPage = () => {
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl">
-        <Breadcrumb pageName="Quiz" />
+        <Breadcrumb pageName="Admin" />
         <div className="overflow-x-auto">
           <div className="min-w-fit rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
             <div className="flex justify-between px-4 py-3 md:px-6 xl:px-9">
