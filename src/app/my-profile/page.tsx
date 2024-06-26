@@ -91,8 +91,7 @@ const Profile = () => {
 
   return (
     <UserLayout>
-      <Breadcrumb pageName="Profile" />
-      <div className="flex w-full flex-col items-center justify-center rounded-md bg-white py-10 dark:bg-gray-dark dark:shadow-card">
+      <div className="mt-4 flex w-full flex-col items-center justify-center rounded-md bg-white py-10 dark:bg-gray-dark dark:shadow-card">
         <div className="my-5 flex flex-col items-center">
           <div className="h-[100px] w-[100px]">
             <Image
