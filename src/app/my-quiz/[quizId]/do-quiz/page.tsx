@@ -31,6 +31,7 @@ interface Quiz {
   totalScore: string;
   passScore: string;
   status: boolean;
+  limit: number;
   createdAt: string;
   createdBy: number;
   questions: Question[];
@@ -77,9 +78,22 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
   };
   const [data, setData] = useState<UserQuiz | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [canDo, setCanDo] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
+    const cando = async () => {
+      try {
+        const response = await apiRequest(
+          "POST",
+          `/user-quiz/${params.quizId}/can-do`,
+        );
+        setCanDo(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    cando();
     const fetchData = async () => {
       try {
         const response = await apiRequest("GET", `/user-quiz/${params.quizId}`);
@@ -130,7 +144,6 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
 
   const handleSubmit = async () => {
     try {
-      console.log({ answers: answers });
       const response = await apiRequest("POST", `/user-quiz/${params.quizId}`, {
         answers: answers,
       });
@@ -138,7 +151,8 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
         message.success("Submited successfully");
         router.push("/my-quiz");
       }
-    } catch (error) {
+    } catch (error: any) {
+      message.error(error?.response?.data?.message);
       console.log(error);
     }
   };
@@ -153,6 +167,7 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
           <div className="min-w-[150px]">
             Full Score : {data.quiz.totalScore}px
           </div>
+          <div className="min-w-[150px]">Limit : {data.quiz.limit} Times</div>
           <div className="min-w-[250px]">Assigner : {data.assigner}</div>
         </div>
         <div className="flex w-full justify-start px-2 py-3">
@@ -197,12 +212,19 @@ const Page: React.FC<AssignPageProps> = ({ params }) => {
           ))}
         </div>
       ))}
-      <div
-        onClick={showModal}
-        className="my-9 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-md bg-primary text-xl text-white hover:bg-blue-500"
-      >
-        Submit
-      </div>
+      {canDo ? (
+        <div
+          onClick={showModal}
+          className="my-9 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-md bg-primary text-xl text-white hover:bg-blue-500"
+        >
+          Submit
+        </div>
+      ) : (
+        <button className="my-9  flex  h-[50px] w-full cursor-not-allowed items-center justify-center rounded-md bg-slate-500 text-xl text-white">
+          You are react to limit to do this quiz!
+        </button>
+      )}
+
       <Modal
         title="Confirm"
         className="font-satoshi"

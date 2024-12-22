@@ -12,6 +12,7 @@ const CreatePage = () => {
   const initialQuizState = {
     name: "",
     description: "",
+    limit: "",
     passScore: "",
     totalScore: "",
     questions: [
@@ -199,6 +200,14 @@ const CreatePage = () => {
             value={quiz.description}
             onChange={handleQuizChange}
             placeholder="Quiz Description"
+            className="mx-3 w-full min-w-[150px] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary max-[12000px]:mt-1"
+          />
+          <input
+            type="number"
+            name="limit"
+            value={quiz.limit}
+            onChange={handleQuizChange}
+            placeholder="Limit"
             className="mx-3 w-full min-w-[150px] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary max-[12000px]:mt-1"
           />
           <input
